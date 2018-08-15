@@ -1,0 +1,19 @@
+jobs:
+  - name: sysbench
+    job_replicas: 1
+    compute:
+      image: severalnines/sysbench:latest
+      prepare_args: --test=fileio --file-num=1 --file-block-size=1M --file-total-size=100M --file-test-mode=seqrd --file-io-mode=sync prepare
+      compute_args: --test=fileio --file-num=1 --file-block-size=1M --file-total-size=100M --file-test-mode=seqrd --file-io-mode=sync run
+      clean_args: ""
+      spaceName: "par-su"
+    config_path: config/job-types/sysbench.yaml
+  - name: ioping
+    job_replicas: 5
+    compute:
+      image: karteek/alpine-ioping:latest
+      prepare_args: -s 10G ioping.${MY_POD_NAME}
+      compute_args: -c 5 -i 0 -S 10G ioping.${MY_POD_NAME}
+      clean_args: ""
+      spaceName: "par-su"
+    config_path: config/job-types/ioping.yaml
